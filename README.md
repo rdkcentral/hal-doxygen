@@ -39,43 +39,28 @@ The structure of repo of the surrounding module is expected to be :-
 
 # Reference Template
 
-The above reference structure is also stored ready to copy into the root folder of any
+Including in this repository in the `template` directory reference structure for the document directory.
+
+This should be copied verbatim, then modifier as required for the specific component where `HAL` documentation is to be generated.
 
 ```
-template/
+template
 └── docs
     ├── generate_docs.sh
     └── pages
         ├── CONTRIBUTING.md -> ../../CONTRIBUTING.md
-        ├── halspec.md
+        ├── halSpec.md
+        ├── halUnitTesting.md
         ├── images
+        │   ├── sequence1.png
+        │   ├── sequence_example.mmd
+        │   ├── state1.png
+        │   └── state_example.mmd
+        ├── L3 Testing environment.md
         ├── LICENSE.md -> ../../LICENSE
-        └── NOTICE.md -> ../../NOTICE git repo, where documentation is required.
+        ├── NOTICE.md -> ../../NOTICE
+        └── testingSpecification.md
 ```
 
-```
+The `generate_docs.sh` when ran will create this `git repo` under the `build` directory.
 
-# generate_docs.sh - Template
-
-```
-#!/usr/bin/env bash
-
-# In the future this should moved to a fixed version
-HAL_GENERATOR_VERSION=develop
-
-# This will look up the last tag in the git repo, depending on the project this may require modification
-PROJECT_VERSION=$(git describe --tags | head -n1)
-
-# Check if the common document configuration is present, if not clone it
-if [ -d "./build" ]; then
-    make -C ./build PROJECT_NAME="RDK-B Wifi HAL" PROJECT_VERSION=${PROJECT_VERSION}
-else
-    echo "Cloning Common documentation generation"
-    git clone git@github.com:comcast-sky/rdk-components-hal-doxygen.git build
-    cd ./build
-    git flow init -d
-    git checkout ${HAL_GENERATOR_VERSION}
-    cd ..
-    # Re-run the script to generate the documentation
-    ./${0}
-```
