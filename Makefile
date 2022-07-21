@@ -3,15 +3,12 @@ MAKE_PATH:=$(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 PROJECT_PATH = $(shell dirname ${PWD})/../
 
 export PROJECT_NAME = $(shell basename $(PROJECT_PATH))
-export PROJECT_VERSION = $(shell git describe --tags | head -n1)
+export PROJECT_VERSION = "NOT SET"
 
 DOXYGEN_CMD = doxygen
 FILES = $(shell find ../../ -name "*.h") 
 FILES += $(shell find ./pages -name "*.md")
 FILES += $(shell find ../pages -name "*.md")
-FILES += ../../NOTICE
-FILES += ../../LICENSE
-FILES += ../../CONTRIBUTING.md
 DEPS = Doxyfile.cfg DoxygenLayout.xml $(FILES)
 
 all: $(DEPS)

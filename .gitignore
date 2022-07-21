@@ -1,3 +1,8 @@
+# User defined
+doxyproject2
+doxygen-awesome-css
+*.bak
+
 # Prerequisites
 *.d
 
