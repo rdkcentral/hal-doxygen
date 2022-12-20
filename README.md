@@ -64,4 +64,3 @@ template
 ```
 
 The `generate_docs.sh` when ran will create this `git repo` under the `build` directory.
-
