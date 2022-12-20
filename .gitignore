@@ -1,3 +1,8 @@
+# User defined
+doxygen
+doxygen-awesome-css
+*.bak
+
 # Prerequisites
 *.d
 
