@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+# PLEASE RUN THIS SCRIPT FROM INSIDE THE docs/ DIR SO THAT RELATIVE PATHS SET IN Doxyfile.cfg WORK AS EXPECTED
+
 # In the future this should moved to a fixed verison
 HAL_GENERATOR_VERSION=develop
 
