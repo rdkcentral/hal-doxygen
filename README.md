@@ -2,13 +2,15 @@
 
 # History
 
-|Version|Date (YY-MM-DD) |Comments|Author|
+|Version|Date (YY-MM-DD) |Comments|
 |-------|----------------|------|-----|
-|0.1 (Draft)| 22/07/21 | Draft| G. Weatherup|
-|0.2 (Draft)|24/02/20221|Updated document | Anjali Thampi |
+|1.0| 23/05/09| Initial release |
 
 ## Table of Contents
 
+- [Module Documentation](#module-documentation)
+- [History](#history)
+  - [Table of Contents](#table-of-contents)
 - [Overview](#overview)
 - [Structure](#structure)
 - [Reference Template](#reference-template)
@@ -19,7 +21,7 @@ As part of the requirement in creating a code module, it must be documented.
 
 This class creates a common framework for including documentation in a common way.
 
-- Template Location - https://github.com/comcast-sky/rdk-components-hal-doxygen
+- Template Location - https://github.com/rdkcentral/hal-doxygen
 
 # Structure
 

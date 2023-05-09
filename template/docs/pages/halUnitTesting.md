@@ -1,31 +1,33 @@
 # HAL Unit Testing
 
-| Date | Author | Comment | Version |
-| --- | --- | --- | --- |
-| 21/07/22 | G. Weatherup | First Release | 1.0.0 |
+| Date | Comment | Version |
+| --- | --- | --- |
+| 21/07/22 | First Release | 1.0.0 |
 
 ## Table of Contents
 
-- [Overview](#overview)
-- [Acronyms](#acronyms)
-- [Definitions](#definitions)
-- [References](#references)
-- [Overview of Requirements and Process](#overview-of-requirements-and-process)
-- [Requirements for the HAL Testing Suite](#requirements-for-the-hal-testing-suite)
-- [Testing Requirements](#testing-requirements)
-	- [Level 1 Testing - Functional Testing](#level-1-testing-functional-testing)
-	- [Level 2 Testing - Module Testing](#level-2-testing-module-testing)
-	- [Level 3 Testing - External testing](#level-3-testing-external-testing)
-	- [Level 4 Testing - Full Stack testing](#level-4-testing-full-stack-testing)
-- [Requirements for Documentation](#requirements-for-documentation)
-- [Delivery Requirements](#delivery-requirements)
+- [HAL Unit Testing](#hal-unit-testing)
+  - [Table of Contents](#table-of-contents)
+  - [Overview](#overview)
+  - [Acronyms](#acronyms)
+  - [Definitions](#definitions)
+  - [References](#references)
+  - [Overview of Requirements and Process](#overview-of-requirements-and-process)
+  - [Requirements for the HAL Testing Suite](#requirements-for-the-hal-testing-suite)
+  - [Testing Requirements](#testing-requirements)
+    - [Level 1 Testing - Functional Testing](#level-1-testing---functional-testing)
+    - [Level 2 Testing - Module Testing](#level-2-testing---module-testing)
+    - [Level 3 Testing - External testing](#level-3-testing---external-testing)
+    - [Level 4 Testing - Full Stack testing](#level-4-testing---full-stack-testing)
+  - [Requirements for Documentation](#requirements-for-documentation)
+  - [Delivery Requirements](#delivery-requirements)
     - [Constraints](#constraints)
-- [Feedback loop](#feedback-loop)
-- [Deployment of the codebase](#deployment-of-the-codebase)
-	- [HAL Directory structure](#hal-directory-structure)
-- [Requirements for versioning](#requirements-for-versioning)
+  - [Feedback loop](#feedback-loop)
+  - [Deployment of the codebase](#deployment-of-the-codebase)
+    - [HAL Directory structure](#hal-directory-structure)
+  - [Requirements for Versioning](#requirements-for-versioning)
     - [Revision Control](#revision-control)
-    - [Proposed Version Numbering scheme](#proposed-version-numbering-scheme)
+    - [Version Numbering scheme](#version-numbering-scheme)
 
 ## Overview
 
@@ -40,7 +42,7 @@ This document defines the unit testing requirements the principles defined here 
 - `RDK-B` \- Reference Design Kit for Broadband Devices
 - `RDK-V` \- Reference Design Kit for Video Devices
 - `HTS` \- HAL Testing Suit
-- `OEM` \- Original Equipment Manufacture (Sky is also an OEM)
+- `OEM` \- Original Equipment Manufacture
 - `SoC` \- System on a Chip
 
 ## Definitions
@@ -201,7 +203,7 @@ Once committed to the final infrastructure it's optional but likely recommended 
 ```
 .
 ├── xxx_hal		-> git repo
-│   ├── xxx_hal.h
+│   ├── include/xxx_hal.h
 │   ├── configure.ac
 │   ├── CONTRIBUTING.md
 │   ├── doc
@@ -216,7 +218,7 @@ Once committed to the final infrastructure it's optional but likely recommended 
     ├── LICENSE
     ├── Makefile.am
     ├── NOTICE
-    └── yyy_hal.h
+    └── include/yyy_hal.h
 ```
 
 ## Requirements for Versioning
@@ -227,7 +229,7 @@ e.g. a change to the `HAL` requires a change to the `HTS`, although vice versa i
 
 The testing suite will `git tag` actual versions together in the source code repository.
 
-This is standard practice for using git with tags, and repo, in comcast terminology this is called the `federated` model.
+This is standard practice for using git with tags, and repo, with branching.
 
 ### Revision Control
 
@@ -260,7 +262,7 @@ flowchart
     xx_V2.0.0 --> HAL-V2.0.0
 ```
 
-### Proposed Version Numbering scheme
+### Version Numbering scheme
 
 `<prefix>-<major>.<minor>.<bugfix / patch / doc>`
 
