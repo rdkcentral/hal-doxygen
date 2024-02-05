@@ -78,6 +78,20 @@ multiple processes, or is there only ever one process that uses the interface?
 If the interface is expected to allocate and return pointers to memory, what
 are the expected rules with respect to ownership, clean up and termination.
 
+### Example Statement
+
+Caller Responsibilities:
+
+Ownership of Memory: Callers must assume full responsibility for managing any memory explicitly given to the module functions to populate. This includes proper allocation and de-allocation to prevent memory leaks.
+Module Responsibilities:
+
+Internal Memory Handling: Modules must independently allocate and de-allocate memory for their internal operations, ensuring efficient resource management.
+-Mandatory Cleanup: Modules are required to release all internally allocated memory upon closure to prevent resource leaks.
+
+Compliance:
+
+Strict Adherence: All module implementations and caller code must strictly adhere to these memory management requirements for optimal performance and system stability. Unless otherwise stated specifically in the API documentation.
+
 ## Power Management Requirements
 
 Is there a requirement for the component to participate in power management.  
