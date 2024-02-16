@@ -21,9 +21,21 @@ Component interface.
 
 # Description
 
-A description of services provided by the interface.
+A description of services provided by the interface, including a diagram if possible showing the relationships.
 
 Where salient, what it does not need to do.
+
+### Example Diagram
+
+This diagram can be tailoured to your needs as required.
+
+```mermaid
+flowchart
+    style HALIF fill:#ffca7b
+    Caller(Caller) <--> HALIF(HAL Interface - xxx.h\n`HAL IF Specifcation / Contract Requirement`)
+    HALIF <--> VendorWrapper(HAL xxx.c/xxx.cpp\nVendor Implementation)
+    VendorWrapper <--> VendorDrivers(Drivers\nVendor Implementation)
+```
 
 # Component Runtime Execution Requirements
 
@@ -170,7 +182,11 @@ e.g. Coverity, Black duck, etc.
 Testing requirements: valgrind, etc. Any specific test to focus on, e.g.
 longevity testing, etc.
 
-What specific component tests should be run.
+What specific component tests should be run?
+
+### Example statement
+
+Both HAL wrapper and 3rd party software implementations should prioritize robust memory management to guarantee leak-free and corruption-resistant operation.
 
 ## Licensing
 
