@@ -21,9 +21,21 @@ Component interface.
 
 # Description
 
-A description of services provided by the interface.
+A description of services provided by the interface, including a diagram if possible showing the relationships.
 
 Where salient, what it does not need to do.
+
+### Example Diagram
+
+This diagram can be tailoured to your needs as required.
+
+```mermaid
+flowchart
+    style HALIF fill:#008800
+    Caller(Caller) <--> HALIF(HAL Interface - xxx.h\n`HAL IF Specifcation / Contract Requirement`)
+    HALIF <--> VendorWrapper(HAL xxx.c/xxx.cpp\nVendor Implementation)
+    VendorWrapper <--> VendorDrivers(Drivers\nVendor Implementation)
+```
 
 # Component Runtime Execution Requirements
 
@@ -77,6 +89,17 @@ multiple processes, or is there only ever one process that uses the interface?
 
 If the interface is expected to allocate and return pointers to memory, what
 are the expected rules with respect to ownership, clean up and termination.
+
+### Example Statement - Memory Model
+
+**Caller Responsibilities:**
+
+- Manage memory passed to specific functions as outlined in the API documentation. This includes allocation and proper deallocation to prevent leaks.
+
+**Module Responsibilities:**
+
+- Handle and deallocate memory used for its internal operations.
+- Release all internally allocated memory upon closure to prevent leaks.
 
 ## Power Management Requirements
 
@@ -156,7 +179,11 @@ e.g. Coverity, Black duck, etc.
 Testing requirements: valgrind, etc. Any specific test to focus on, e.g.
 longevity testing, etc.
 
-What specific component tests should be run.
+What specific component tests should be run?
+
+### Example statement
+
+Both HAL wrapper and 3rd party software implementations should prioritize robust memory management to guarantee leak-free and corruption-resistant operation.
 
 ## Licensing
 
