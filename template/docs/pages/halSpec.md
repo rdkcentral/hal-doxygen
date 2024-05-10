@@ -263,12 +263,26 @@ Both HAL wrapper and 3rd party software implementations should prioritize robust
 
 Are there any licensing requirements?
 
+### Example Statement - Licensing
+
+- is expected to released under the Apache License 2.0.
+
+----
+
 ## Build Requirements
 
 Any build requirements, specific tooling, library format, etc.
 
 versions of specific support libraries. Ideally this would be a systemwide for
 the RDK.
+
+----
+
+### Example statement - Build Requirements
+
+The source code should be capable of, but not be limited to, building under the Yocto distribution environment. The recipe should deliver a shared library named as `xxxx.so` 
+
+----
 
 ## Variability Management
 
@@ -282,6 +296,17 @@ how is that managed?
 
 Is there an expected approach for managing different interface library
 versions?
+
+
+----
+
+### Example Statement - Variable Management
+
+The role of adjusting the interface, guided by versioning, rests solely within architecture requirements. Thereafter, vendors are obliged to align their implementation with a designated version of the interface. As per Service Level Agreement (SLA) terms, they may transition to newer versions based on demand needs.
+
+Each API interface will be versioned using [Semantic Versioning 2.0.0](https://semver.org/), the vendor code will comply with a specific version of the interface.
+
+----
 
 ## Platform or Product Customization
 
@@ -332,6 +357,21 @@ Is there a state model?
 
 State diagrams, sequence diagram, etc. are always a useful tool to describe
 all the behavioural aspects of the components.
+
+
+----
+
+### Extended Information- Theory of operation and key concepts
+
+**Purpose**: To provide stakeholders with a clear understanding of how the interfaced component(s) will function.
+
+**Key Questions to Address:**
+
+**Object Lifecycles:** How are objects within the component created, used, and destroyed? Are there unique identifiers for these objects?
+**Method Sequencing:** Is there a specific order in which the component's methods need to be called (e.g., must be initialized before being configured)?
+**State-Dependent Behavior:** Can certain methods only be used when the component is in a particular state? Does a state model govern the component's behavior?
+
+----
 
 ### Example Diagrams
 
