@@ -25,6 +25,8 @@ A description of services provided by the interface, including a diagram if poss
 
 Where salient, what it does not need to do.
 
+----
+
 ### Example Diagram
 
 This diagram can be tailoured to your needs as required.
@@ -36,6 +38,7 @@ flowchart
     HALIF <--> VendorWrapper(HAL xxx.c/xxx.cpp\nVendor Implementation)
     VendorWrapper <--> VendorDrivers(Drivers\nVendor Implementation)
 ```
+----
 
 # Component Runtime Execution Requirements
 
@@ -80,6 +83,15 @@ is not allowed to create threads, and a separate thread of execution is
 required, it is likely that this dictates the need for a separate process and
 the proxy information above applies.
 
+----
+
+## Example Statement - Threading Model
+
+Callers to this API have the responsibility to use it in a thread safe manner, you don't need this statement it's their problem not a requirement for this interface, you can only talk about your interface and it's reuqirements.
+
+Vendors can implement internal threading and event mechanisms for operational purposes. These mechanisms must ensure thread safety when interacting with the provided interface. Additionally, they must guarantee cleanup of resources upon closure.
+----
+
 ## Process Model
 
 Is it a requirement for the component to support multiple instantiation from
@@ -90,16 +102,34 @@ multiple processes, or is there only ever one process that uses the interface?
 If the interface is expected to allocate and return pointers to memory, what
 are the expected rules with respect to ownership, clean up and termination.
 
-### Example Statement - Memory Model
+----
+
+### Example Statement - Memory Model - Option 1 
 
 **Caller Responsibilities:**
 
+- Callers must assume full responsibility for managing any memory explicitly given to the module functions to populate. This includes proper allocation and de-allocation to prevent memory leaks.
 - Manage memory passed to specific functions as outlined in the API documentation. This includes allocation and proper deallocation to prevent leaks.
 
 **Module Responsibilities:**
 
 - Handle and deallocate memory used for its internal operations.
 - Release all internally allocated memory upon closure to prevent leaks.
+
+### Example Statement - Memory Model - Option 2
+
+**Caller Responsibilities:**
+
+- Callers must assume full responsibility for managing any memory explicitly given to the module functions to populate. This includes proper allocation and de-allocation to prevent memory leaks.
+
+----
+
+**Module Responsibilities:**
+
+- Modules must allocate and de-allocate memory for their internal operations, ensuring efficient resource management.
+- Modules are required to release all internally allocated memory upon closure to prevent resource leaks.
+- All module implementations and caller code must strictly adhere to these memory management requirements for optimal performance and system stability. Unless otherwise stated specifically in the API documentation.
+- All strings used in this module must be zero-terminated. This ensures that string functions can accurately determine the length of the string and prevents buffer overflows when manipulating strings.
 
 ## Power Management Requirements
 
@@ -127,6 +157,12 @@ the threading rules?
 If messages are shared, what are responsibilities for managing the memory
 allocation, etc.
 
+----
+
+### Example Statement - Asynchronous Notification Model
+
+This API is called from a single thread context, therefore is must not suspend.
+
 ## Blocking calls
 
 Are any of the exposed methods allowed to block (sleep or make system calls
@@ -138,6 +174,14 @@ How is a blocked call prematurely terminated?
 
 If the component detects an internal error (e.g. out of memory) what should it
 do?
+
+### Example Statement - Internal Error Hanlding
+
+**Synchronous Error Handling:** All APIs must return errors synchronously as a return value. This ensures immediate notification of errors to the caller.
+**Internal Error Reporting:** The HAL is responsible for reporting any internal system errors (e.g., out-of-memory conditions) through the return value.
+**Focus on Logging for Errors:** For system errors, the HAL should prioritize logging the error details for further investigation and resolution.
+
+----
 
 ## Persistence Model
 
@@ -162,6 +206,32 @@ purposes?
 If yes, are there any rules (file naming conventions, etc.) that the component
 should abide by?
 
+----
+
+### Example Statement - Logging and debugging requirements
+
+The component must log all errors and critical informative messages.  Use the syslog facility for structured logging and potential remote logging capabilities.  These logs are essential for debugging and understanding the system's operation.
+
+Guidelines
+
+- **Consistency**: Strive for consistent logging practices across all HAL components for better troubleshooting.
+- **Logs:** Store logs in the file /rdklogs/logs/xxxx_hal.log.
+
+Log Levels: Use standard Linux log levels as follows:
+
+- **FATAL**: System cannot continue.
+- **ERROR**: Error condition preventing a specific operation.
+- **WARNING**: Unusual condition, but not immediately hindering.
+- **NOTICE**: Normal but noteworthy condition.
+- **INFO**: Informational message.
+- **DEBUG**: Low-level debugging information.
+- **TRACE**: Highly detailed tracing information.
+
+Message Formatting: Include timestamps, component names, severity levels, and clear messages. Consider a standard format.
+Log Rotation: Implement log rotation (logrotate) to manage log size.
+
+----
+
 ## Memory and performance requirements
 
 Where memory and performance are of concern, Architecture may of imposed
@@ -181,9 +251,13 @@ longevity testing, etc.
 
 What specific component tests should be run?
 
-### Example statement
+----
+
+### Example statement - Quality Control
 
 Both HAL wrapper and 3rd party software implementations should prioritize robust memory management to guarantee leak-free and corruption-resistant operation.
+
+----
 
 ## Licensing
 
