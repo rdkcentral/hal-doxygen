@@ -87,9 +87,8 @@ the proxy information above applies.
 
 ## Example Statement - Threading Model
 
-Callers to this API have the responsibility to use it in a thread safe manner, you don't need this statement it's their problem not a requirement for this interface, you can only talk about your interface and it's reuqirements.
+Vendors may implement internal threading and event mechanisms to meet their operational requirements. These mechanisms must be designed to ensure thread safety when interacting with HAL interface. Proper cleanup of allocated resources (e.g., memory, file handles, threads) is mandatory when the vendor software terminates or closes its connection to the HAL.
 
-Vendors can implement internal threading and event mechanisms for operational purposes. These mechanisms must ensure thread safety when interacting with the provided interface. Additionally, they must guarantee cleanup of resources upon closure.
 ----
 
 ## Process Model
@@ -108,19 +107,12 @@ are the expected rules with respect to ownership, clean up and termination.
 
 **Caller Responsibilities:**
 
-- Callers must assume full responsibility for managing any memory explicitly given to the module functions to populate. This includes proper allocation and de-allocation to prevent memory leaks.
-- Manage memory passed to specific functions as outlined in the API documentation. This includes allocation and proper deallocation to prevent leaks.
+- Manage memory passed to specific functions as outlined in the API documentation. This includes allocation and deallocation to prevent leaks.
 
 **Module Responsibilities:**
 
 - Handle and deallocate memory used for its internal operations.
 - Release all internally allocated memory upon closure to prevent leaks.
-
-### Example Statement - Memory Model - Option 2
-
-**Caller Responsibilities:**
-
-- Callers must assume full responsibility for managing any memory explicitly given to the module functions to populate. This includes proper allocation and de-allocation to prevent memory leaks.
 
 ----
 
@@ -170,6 +162,18 @@ that can block)?
 Call out specific methods that are allowed to block.  
 How is a blocked call prematurely terminated?
 
+
+----
+### Example Statement - Blocking calls
+
+**Synchronous and Responsive:** All APIs within this module should operate synchronously and complete within a reasonable timeframe based on the complexity of the operation. Specific timeout values or guidelines may be documented for individual API calls.
+
+**Timeout Handling:** To ensure resilience in cases of unresponsiveness, implement appropriate timeouts for API calls where failure due to lack of response is a possibility.  Refer to the API documentation for recommended timeout values per function.
+
+**Non-Blocking Requirement: ** Given the single-threaded environment in which these APIs will be called, it is imperative that they do not block or suspend execution of the main thread. Implementations must avoid long-running operations or utilize asynchronous mechanisms where necessary to maintain responsiveness.
+
+----
+
 ## Internal Error Handling
 
 If the component detects an internal error (e.g. out of memory) what should it
@@ -208,7 +212,7 @@ should abide by?
 
 ----
 
-### Example Statement - Logging and debugging requirements
+### Example Statement - Logging and debugging requirements - option 1
 
 The component must log all errors and critical informative messages.  Use the syslog facility for structured logging and potential remote logging capabilities.  These logs are essential for debugging and understanding the system's operation.
 
@@ -230,6 +234,24 @@ Log Levels: Use standard Linux log levels as follows:
 Message Formatting: Include timestamps, component names, severity levels, and clear messages. Consider a standard format.
 Log Rotation: Implement log rotation (logrotate) to manage log size.
 
+### Example Statement - Loggign and debugging requirements - option 2
+
+The component is required to record all errors and critical informative messages to aid in identifying, debugging, and understanding the functional flow of the system. Logging should be implemented using the syslog method, as it provides robust logging capabilities suited for system-level software. The use of `printf` is discouraged unless `syslog` is not available.
+
+All HAL components must adhere to a consistent logging process. When logging is necessary, it should be performed into the lpa_vendor_hal.log file, which is located in either the /var/tmp/ or /rdklogs/logs/ directories.
+
+Logs must be categorized according to the following log levels, as defined by the Linux standard logging system, listed here in descending order of severity:
+
+- **FATAL**: Critical conditions, typically indicating system crashes or severe failures that require immediate attention.
+- **ERROR**: Non-fatal error conditions that nonetheless significantly impede normal operation.
+- **WARNING**: Potentially harmful situations that do not yet represent errors.
+- **NOTICE**: Important but not error-level events.
+- **INFO**: General informational messages that highlight system operations.
+- **DEBUG**: Detailed information typically useful only when diagnosing problems.
+- **TRACE**: Very fine-grained logging to trace the internal flow of the system.
+
+Each log entry should include a timestamp, the log level, and a message describing the event or condition. This standard format will facilitate easier parsing and analysis of log files across different vendors and components.
+
 ----
 
 ## Memory and performance requirements
@@ -239,6 +261,13 @@ limits on memory and CPU usage.
 
 When the component is delivered, is there a requirement to state memory and
 CPU usage statistics for auditing purposes
+
+
+---- Example Statement
+
+The component should be designed for efficiency, minimizing its impact on system resources during normal operation. Resource utilization (e.g., CPU, memory) should be proportional to the specific task being performed and align with any performance expectations documented in the API specifications.
+
+----
 
 ## Quality Control
 
@@ -255,7 +284,9 @@ What specific component tests should be run?
 
 ### Example statement - Quality Control
 
-Both HAL wrapper and 3rd party software implementations should prioritize robust memory management to guarantee leak-free and corruption-resistant operation.
+To ensure the highest quality and reliability, it is strongly recommended that third-party quality assurance tools like `Coverity`, `Black Duck`, and `Valgrind` be employed to thoroughly analyze the implementation. The goal is to detect and resolve potential issues such as memory leaks, memory corruption, or other defects before deployment.
+
+Furthermore, both the HAL wrapper and any third-party software interacting with it must prioritize robust memory management practices. This includes meticulous allocation, deallocation, and error handling to guarantee a stable and leak-free operation.
 
 ----
 
@@ -265,7 +296,7 @@ Are there any licensing requirements?
 
 ### Example Statement - Licensing
 
-- is expected to released under the Apache License 2.0.
+- The implementation is expected to released under the Apache License 2.0.
 
 ----
 
@@ -346,19 +377,15 @@ their life cycle and how they are identified.
 Is there an order in which methods are expected to be called?  
 For example:
 
-  1. Initialization/Open
-
-  2. Configure
-
-  3. Start
+- Initialization/Open
+- Configure
+- Start
 
 Are there specific methods that will only be called when in a specific state.  
 Is there a state model?
 
 State diagrams, sequence diagram, etc. are always a useful tool to describe
 all the behavioural aspects of the components.
-
-
 ----
 
 ### Extended Information- Theory of operation and key concepts
