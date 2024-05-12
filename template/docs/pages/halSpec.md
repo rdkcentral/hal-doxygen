@@ -10,14 +10,25 @@ Version format to be defined. Proposal: Major.Minor.Doc
 
 The version should increment with:
 
-  * Doc: A change in the documentation. Since the documentation defines sematic operation, it is important as an interface header definition change. It is backward compatible because it does not change the ABI.
-
-  * Minor: A backward compatible change to the API. Defined as no change to the ABI exposed by the library that is used by the client.
-
-  * Major: A non-backward compatible change to the API.
+- Doc: A change in the documentation. Since the documentation defines sematic operation, it is important as an interface header definition change. It is backward compatible because it does not change the ABI.
+- Minor: A backward compatible change to the API. Defined as no change to the ABI exposed by the library that is used by the client.
+- Major: A non-backward compatible change to the API.
 
 A version history should always be provide to track the evolution of the
 Component interface.
+
+
+## Acronyms
+
+Generate a list of acronyms from the source code and specification so that 
+
+----
+
+## Example Satement - Acronyms
+
+"The following table lists acronyms identified within the `xxx.md` and `xxx.h` files. These acronyms were extracted by carefully reviewing the documents for abbreviations and their corresponding definitions. Note that this list may not be exhaustive, as some acronyms might be used contextually without explicit definition."
+
+----
 
 # Description
 
@@ -170,7 +181,7 @@ How is a blocked call prematurely terminated?
 
 **Timeout Handling:** To ensure resilience in cases of unresponsiveness, implement appropriate timeouts for API calls where failure due to lack of response is a possibility.  Refer to the API documentation for recommended timeout values per function.
 
-**Non-Blocking Requirement: ** Given the single-threaded environment in which these APIs will be called, it is imperative that they do not block or suspend execution of the main thread. Implementations must avoid long-running operations or utilize asynchronous mechanisms where necessary to maintain responsiveness.
+**Non-Blocking Requirement:** Given the single-threaded environment in which these APIs will be called, it is imperative that they do not block or suspend execution of the main thread. Implementations must avoid long-running operations or utilize asynchronous mechanisms where necessary to maintain responsiveness.
 
 ----
 
@@ -234,11 +245,13 @@ Log Levels: Use standard Linux log levels as follows:
 Message Formatting: Include timestamps, component names, severity levels, and clear messages. Consider a standard format.
 Log Rotation: Implement log rotation (logrotate) to manage log size.
 
+----
+
 ### Example Statement - Loggign and debugging requirements - option 2
 
 The component is required to record all errors and critical informative messages to aid in identifying, debugging, and understanding the functional flow of the system. Logging should be implemented using the syslog method, as it provides robust logging capabilities suited for system-level software. The use of `printf` is discouraged unless `syslog` is not available.
 
-All HAL components must adhere to a consistent logging process. When logging is necessary, it should be performed into the lpa_vendor_hal.log file, which is located in either the /var/tmp/ or /rdklogs/logs/ directories.
+All HAL components must adhere to a consistent logging process. When logging is necessary, it should be performed into the `xxx_vendor_hal.log` file, which is located in either the `/var/tmp/` or `/rdklogs/logs/` directories.
 
 Logs must be categorized according to the following log levels, as defined by the Linux standard logging system, listed here in descending order of severity:
 
@@ -263,9 +276,17 @@ When the component is delivered, is there a requirement to state memory and
 CPU usage statistics for auditing purposes
 
 
----- Example Statement
+----
+
+### Example Statement - Memory and performance requirements - Option 1
 
 The component should be designed for efficiency, minimizing its impact on system resources during normal operation. Resource utilization (e.g., CPU, memory) should be proportional to the specific task being performed and align with any performance expectations documented in the API specifications.
+
+### Example Statement - Memory and performance requirements - Option 2
+
+**Client Module Responsibility:** The client module using the HAL is responsible for allocating and deallocating memory for any data structures required by the HAL's APIs. This includes structures passed as parameters to HAL functions and any buffers used to receive data from the HAL.
+
+**Vendor Implementation Responsibility:**  Third-party vendors, when implementing the HAL, may allocate memory internally for their specific operational needs. It is the vendor's sole responsibility to manage and deallocate this internally allocated memory.
 
 ----
 
@@ -296,7 +317,7 @@ Are there any licensing requirements?
 
 ### Example Statement - Licensing
 
-- The implementation is expected to released under the Apache License 2.0.
+The implementation is expected to released under the Apache License 2.0.
 
 ----
 
