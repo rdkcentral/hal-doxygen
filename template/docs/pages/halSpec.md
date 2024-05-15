@@ -107,6 +107,14 @@ Vendors may implement internal threading and event mechanisms to meet their oper
 Is it a requirement for the component to support multiple instantiation from
 multiple processes, or is there only ever one process that uses the interface?
 
+----
+
+## Example Statement - Process Model (Must Be Process Safe)
+
+All APIs are expected to be called from multiple processes. Due to this concurrent access, vendors must implement protection mechanisms within their API implementations to handle multiple processes calling the same API simultaneously. This is crucial to ensure data integrity, prevent race conditions, and maintain the overall stability and reliability of the system.
+
+----
+
 ## Memory Model
 
 If the interface is expected to allocate and return pointers to memory, what
