@@ -1,6 +1,6 @@
 # Module Documentation
 
-# History
+## History
 
 |Version|Date (YY-MM-DD) |Comments|
 |-------|----------------|------|
@@ -10,24 +10,25 @@
 
 - [Module Documentation](#module-documentation)
 - [History](#history)
-  - [Table of Contents](#table-of-contents)
+- [Table of Contents](#table-of-contents)
 - [Overview](#overview)
 - [Structure](#structure)
 - [Reference Template](#reference-template)
+- [Generator Caller Script](#generator-caller-script)
 
-# Overview
+## Overview
 
 As part of the requirement in creating a code module, it must be documented.
 
 This class creates a common framework for including documentation in a common way.
 
-- Template Location - https://github.com/rdkcentral/hal-doxygen
+- Template Location - [https://github.com/rdkcentral/hal-doxygen](https://github.com/rdkcentral/hal-doxygen)
 
-# Structure
+## Structure
 
 The structure of repo of the surrounding module is expected to be :-
 
-```
+```bash
 .
 ├── docs
 │   ├── build                   -> [This repo]
@@ -44,15 +45,15 @@ The structure of repo of the surrounding module is expected to be :-
 ├── include                                             -> Location of header files *.h search pattern applied from the doxygen configuration
 ```
 
-* Note: pages *.md is searched, as well as include/*.h
+- Note: pages *.md is searched, as well as include/*.h
 
-# Reference Template
+## Reference Template
 
 Including in this repository in the `template` directory reference structure for the document directory.
 
 This should be copied verbatim, then modifier as required for the specific component where `HAL` documentation is to be generated.
 
-```
+```bash
 template
 └── docs
     ├── generate_docs.sh
@@ -70,3 +71,37 @@ template
 ```
 
 The `generate_docs.sh` when ran will create this `git repo` under the `build` directory.
+
+## Generator Caller Script
+
+The expection is that the makefile would be called by the upper layers via a simple generator script, which would clone the common code, and pass extra parameters to the configuration it is upto the caller to modify the requirements for their project.
+
+Variables that should be reviewed for correctness :-
+
+|Variable|Comment|
+|--------|-------|
+|PROJECT_NAME | The name of the project / subproject|
+|PROJECT_VERSION | version of the project, this is derived by default from the git tag|
+|DOXYGEN_EXTRA_PARAMS | any extra params you wish to pass to doxygen|
+|HAL_GENERATOR_VERSION | offical released version of the generator to use (master contains the latest release version, but it's upto the caller if they want to specify a fixed version)|
+
+```bash
+# In the future this should moved to a fixed verison
+HAL_GENERATOR_VERSION=master
+
+# This will look up the last tag in the git repo, depending on the project this may require modification
+PROJECT_VERSION=$(git describe --tags | head -n1)
+DOXYGEN_EXTRA_PARAMS="-d CODE_DEFINE_REQUIRED"
+
+# Check if the common document configuration is present, if not clone it
+if [ -d "./build" ]; then
+    make -C ./build PROJECT_NAME="Project Name" PROJECT_VERSION=${PROJECT_VERSION} DOXYGEN_EXTRA_PARAMS=${DOXYGEN_EXTRA_PARAMS}"
+else
+    echo "Cloning Common documentation generation"
+    git clone git@github.com:rdkcentral/hal-doxygen.git build
+    cd ./build
+    git checkout ${HAL_GENERATOR_VERSION}
+    cd ..
+    ./${0}
+fi
+```
