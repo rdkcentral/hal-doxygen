@@ -1,29 +1,39 @@
 # Name_Of_Component HAL Documentation
 
-# History
+## Acronyms
 
-|Version|Date|Author|
-|-------|-----|-----|
-|1.0.0| 22/07/01 (Reverse Date)|Joe Bloggs|
+Generate a list of acronyms from the source code and specification so that 
 
-Version format to be defined. Proposal: Major.Minor.Doc 
+**Note:** If the list of Acronyms is extensive consider placing in an Appendix Section at the bottom of this document.
 
-The version should increment with:
+----
 
-  * Doc: A change in the documentation. Since the documentation defines sematic operation, it is important as an interface header definition change. It is backward compatible because it does not change the ABI.
+## Example Satement - Acronyms
 
-  * Minor: A backward compatible change to the API. Defined as no change to the ABI exposed by the library that is used by the client.
+"The following table lists acronyms identified within the `xxx.md` and `xxx.h` files. These acronyms were extracted by carefully reviewing the documents for abbreviations and their corresponding definitions. Note that this list may not be exhaustive, as some acronyms might be used contextually without explicit definition."
 
-  * Major: A non-backward compatible change to the API.
-
-A version history should always be provide to track the evolution of the
-Component interface.
+----
 
 # Description
 
-A description of services provided by the interface.
+A description of services provided by the interface, including a diagram if possible showing the relationships.
 
 Where salient, what it does not need to do.
+
+----
+
+### Example Diagram
+
+This diagram can be tailoured to your needs as required.
+
+```mermaid
+flowchart
+    style HALIF fill:#008800
+    Caller(Caller) <--> HALIF(HAL Interface - xxx.h\n`HAL IF Specifcation / Contract Requirement`)
+    HALIF <--> VendorWrapper(HAL xxx.c/xxx.cpp\nVendor Implementation)
+    VendorWrapper <--> VendorDrivers(Drivers\nVendor Implementation)
+```
+----
 
 # Component Runtime Execution Requirements
 
@@ -68,15 +78,53 @@ is not allowed to create threads, and a separate thread of execution is
 required, it is likely that this dictates the need for a separate process and
 the proxy information above applies.
 
+----
+
+## Example Statement - Threading Model
+
+Vendors may implement internal threading and event mechanisms to meet their operational requirements. These mechanisms must be designed to ensure thread safety when interacting with HAL interface. Proper cleanup of allocated resources (e.g., memory, file handles, threads) is mandatory when the vendor software terminates or closes its connection to the HAL.
+
+----
+
 ## Process Model
 
 Is it a requirement for the component to support multiple instantiation from
 multiple processes, or is there only ever one process that uses the interface?
 
+----
+
+## Example Statement - Process Model (Must Be Process Safe)
+
+All APIs are expected to be called from multiple processes. Due to this concurrent access, vendors must implement protection mechanisms within their API implementations to handle multiple processes calling the same API simultaneously. This is crucial to ensure data integrity, prevent race conditions, and maintain the overall stability and reliability of the system.
+
+----
+
 ## Memory Model
 
 If the interface is expected to allocate and return pointers to memory, what
 are the expected rules with respect to ownership, clean up and termination.
+
+----
+
+### Example Statement - Memory Model - Option 1 
+
+**Caller Responsibilities:**
+
+- Manage memory passed to specific functions as outlined in the API documentation. This includes allocation and deallocation to prevent leaks.
+
+**Module Responsibilities:**
+
+- Handle and deallocate memory used for its internal operations.
+- Release all internally allocated memory upon closure to prevent leaks.
+
+----
+
+**Module Responsibilities:**
+
+- Modules must allocate and de-allocate memory for their internal operations, ensuring efficient resource management.
+- Modules are required to release all internally allocated memory upon closure to prevent resource leaks.
+- All module implementations and caller code must strictly adhere to these memory management requirements for optimal performance and system stability. Unless otherwise stated specifically in the API documentation.
+- All strings used in this module must be zero-terminated. This ensures that string functions can accurately determine the length of the string and prevents buffer overflows when manipulating strings.
 
 ## Power Management Requirements
 
@@ -104,6 +152,12 @@ the threading rules?
 If messages are shared, what are responsibilities for managing the memory
 allocation, etc.
 
+----
+
+### Example Statement - Asynchronous Notification Model
+
+This API is called from a single thread context, therefore is must not suspend.
+
 ## Blocking calls
 
 Are any of the exposed methods allowed to block (sleep or make system calls
@@ -111,10 +165,30 @@ that can block)?
 Call out specific methods that are allowed to block.  
 How is a blocked call prematurely terminated?
 
+
+----
+### Example Statement - Blocking calls
+
+**Synchronous and Responsive:** All APIs within this module should operate synchronously and complete within a reasonable timeframe based on the complexity of the operation. Specific timeout values or guidelines may be documented for individual API calls.
+
+**Timeout Handling:** To ensure resilience in cases of unresponsiveness, implement appropriate timeouts for API calls where failure due to lack of response is a possibility.  Refer to the API documentation for recommended timeout values per function.
+
+**Non-Blocking Requirement:** Given the single-threaded environment in which these APIs will be called, it is imperative that they do not block or suspend execution of the main thread. Implementations must avoid long-running operations or utilize asynchronous mechanisms where necessary to maintain responsiveness.
+
+----
+
 ## Internal Error Handling
 
 If the component detects an internal error (e.g. out of memory) what should it
 do?
+
+### Example Statement - Internal Error Hanlding
+
+**Synchronous Error Handling:** All APIs must return errors synchronously as a return value. This ensures immediate notification of errors to the caller.
+**Internal Error Reporting:** The HAL is responsible for reporting any internal system errors (e.g., out-of-memory conditions) through the return value.
+**Focus on Logging for Errors:** For system errors, the HAL should prioritize logging the error details for further investigation and resolution.
+
+----
 
 ## Persistence Model
 
@@ -139,6 +213,52 @@ purposes?
 If yes, are there any rules (file naming conventions, etc.) that the component
 should abide by?
 
+----
+
+### Example Statement - Logging and debugging requirements - option 1
+
+The component must log all errors and critical informative messages.  Use the syslog facility for structured logging and potential remote logging capabilities.  These logs are essential for debugging and understanding the system's operation.
+
+Guidelines
+
+- **Consistency**: Strive for consistent logging practices across all HAL components for better troubleshooting.
+- **Logs:** Store logs in the file /rdklogs/logs/xxxx_hal.log.
+
+Log Levels: Use standard Linux log levels as follows:
+
+- **FATAL**: System cannot continue.
+- **ERROR**: Error condition preventing a specific operation.
+- **WARNING**: Unusual condition, but not immediately hindering.
+- **NOTICE**: Normal but noteworthy condition.
+- **INFO**: Informational message.
+- **DEBUG**: Low-level debugging information.
+- **TRACE**: Highly detailed tracing information.
+
+Message Formatting: Include timestamps, component names, severity levels, and clear messages. Consider a standard format.
+Log Rotation: Implement log rotation (logrotate) to manage log size.
+
+----
+
+### Example Statement - Loggign and debugging requirements - option 2
+
+The component is required to record all errors and critical informative messages to aid in identifying, debugging, and understanding the functional flow of the system. Logging should be implemented using the syslog method, as it provides robust logging capabilities suited for system-level software. The use of `printf` is discouraged unless `syslog` is not available.
+
+All HAL components must adhere to a consistent logging process. When logging is necessary, it should be performed into the `xxx_vendor_hal.log` file, which is located in either the `/var/tmp/` or `/rdklogs/logs/` directories.
+
+Logs must be categorized according to the following log levels, as defined by the Linux standard logging system, listed here in descending order of severity:
+
+- **FATAL**: Critical conditions, typically indicating system crashes or severe failures that require immediate attention.
+- **ERROR**: Non-fatal error conditions that nonetheless significantly impede normal operation.
+- **WARNING**: Potentially harmful situations that do not yet represent errors.
+- **NOTICE**: Important but not error-level events.
+- **INFO**: General informational messages that highlight system operations.
+- **DEBUG**: Detailed information typically useful only when diagnosing problems.
+- **TRACE**: Very fine-grained logging to trace the internal flow of the system.
+
+Each log entry should include a timestamp, the log level, and a message describing the event or condition. This standard format will facilitate easier parsing and analysis of log files across different vendors and components.
+
+----
+
 ## Memory and performance requirements
 
 Where memory and performance are of concern, Architecture may of imposed
@@ -146,6 +266,21 @@ limits on memory and CPU usage.
 
 When the component is delivered, is there a requirement to state memory and
 CPU usage statistics for auditing purposes
+
+
+----
+
+### Example Statement - Memory and performance requirements - Option 1
+
+The component should be designed for efficiency, minimizing its impact on system resources during normal operation. Resource utilization (e.g., CPU, memory) should be proportional to the specific task being performed and align with any performance expectations documented in the API specifications.
+
+### Example Statement - Memory and performance requirements - Option 2
+
+**Client Module Responsibility:** The client module using the HAL is responsible for allocating and deallocating memory for any data structures required by the HAL's APIs. This includes structures passed as parameters to HAL functions and any buffers used to receive data from the HAL.
+
+**Vendor Implementation Responsibility:**  Third-party vendors, when implementing the HAL, may allocate memory internally for their specific operational needs. It is the vendor's sole responsibility to manage and deallocate this internally allocated memory.
+
+----
 
 ## Quality Control
 
@@ -156,11 +291,27 @@ e.g. Coverity, Black duck, etc.
 Testing requirements: valgrind, etc. Any specific test to focus on, e.g.
 longevity testing, etc.
 
-What specific component tests should be run.
+What specific component tests should be run?
+
+----
+
+### Example statement - Quality Control
+
+To ensure the highest quality and reliability, it is strongly recommended that third-party quality assurance tools like `Coverity`, `Black Duck`, and `Valgrind` be employed to thoroughly analyze the implementation. The goal is to detect and resolve potential issues such as memory leaks, memory corruption, or other defects before deployment.
+
+Furthermore, both the HAL wrapper and any third-party software interacting with it must prioritize robust memory management practices. This includes meticulous allocation, deallocation, and error handling to guarantee a stable and leak-free operation.
+
+----
 
 ## Licensing
 
 Are there any licensing requirements?
+
+### Example Statement - Licensing
+
+The implementation is expected to released under the Apache License 2.0.
+
+----
 
 ## Build Requirements
 
@@ -168,6 +319,14 @@ Any build requirements, specific tooling, library format, etc.
 
 versions of specific support libraries. Ideally this would be a systemwide for
 the RDK.
+
+----
+
+### Example statement - Build Requirements
+
+The source code should be capable of, but not be limited to, building under the Yocto distribution environment. The recipe should deliver a shared library named as `xxxx.so` 
+
+----
 
 ## Variability Management
 
@@ -181,6 +340,17 @@ how is that managed?
 
 Is there an expected approach for managing different interface library
 versions?
+
+
+----
+
+### Example Statement - Variable Management
+
+The role of adjusting the interface, guided by versioning, rests solely within architecture requirements. Thereafter, vendors are obliged to align their implementation with a designated version of the interface. As per Service Level Agreement (SLA) terms, they may transition to newer versions based on demand needs.
+
+Each API interface will be versioned using [Semantic Versioning 2.0.0](https://semver.org/), the vendor code will comply with a specific version of the interface.
+
+----
 
 ## Platform or Product Customization
 
@@ -220,17 +390,28 @@ their life cycle and how they are identified.
 Is there an order in which methods are expected to be called?  
 For example:
 
-  1. Initialization/Open
-
-  2. Configure
-
-  3. Start
+- Initialization/Open
+- Configure
+- Start
 
 Are there specific methods that will only be called when in a specific state.  
 Is there a state model?
 
 State diagrams, sequence diagram, etc. are always a useful tool to describe
 all the behavioural aspects of the components.
+----
+
+### Extended Information- Theory of operation and key concepts
+
+**Purpose**: To provide stakeholders with a clear understanding of how the interfaced component(s) will function.
+
+**Key Questions to Address:**
+
+**Object Lifecycles:** How are objects within the component created, used, and destroyed? Are there unique identifiers for these objects?
+**Method Sequencing:** Is there a specific order in which the component's methods need to be called (e.g., must be initialized before being configured)?
+**State-Dependent Behavior:** Can certain methods only be used when the component is in a particular state? Does a state model govern the component's behavior?
+
+----
 
 ### Example Diagrams
 
