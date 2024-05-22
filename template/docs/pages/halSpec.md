@@ -22,6 +22,8 @@ Component interface.
 
 Generate a list of acronyms from the source code and specification so that 
 
+**Note:** If the list of Acronyms is extensive consider placing in an Appendix Section at the bottom of this document.
+
 ----
 
 ## Example Satement - Acronyms
