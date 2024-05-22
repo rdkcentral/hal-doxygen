@@ -14,10 +14,10 @@ Clear and well-structured documentation is essential for code maintainability, r
 
 ### Best Practices
 
-* **Use `/**! */` for Single-Line Comments:** This is the preferred format for brief descriptions, eliminating the need for the `@brief` tag:
+* **Use `/*!< */` for Single-Line Comments:** This is the preferred format for brief descriptions, eliminating the need for the `@brief` tag:
 
 ```c++
-/**! Retrieves the current Ethernet WAN interface name. */
+/*!< Retrieves the current Ethernet WAN interface name. */
 ```
 
 * **Use `/** ... */` for Multi-Line Comments:** For functions with parameters, return values, or more detailed explanations, use multi-line comments to maintain readability:
@@ -48,7 +48,7 @@ Clear and well-structured documentation is essential for code maintainability, r
 ### Example: Well-Documented Function
 
 ```c++
-/**!
+/**
  * @brief Retrieves the current DOCSIS registration status.
  *
  * This function populates a provided `CMMGMT_CM_DOCSIS_INFO` structure with DOCSIS registration details. 
