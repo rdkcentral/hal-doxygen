@@ -84,8 +84,7 @@ the proxy information above applies.
 
 Vendors may implement internal threading and event mechanisms to meet their operational requirements. These mechanisms must be designed to ensure thread safety when interacting with HAL interface. Proper cleanup of allocated resources (e.g., memory, file handles, threads) is mandatory when the vendor software terminates or closes its connection to the HAL.
 
-
-This interface is not inherently thread-safe. It is the responsibility of the calling module or component to ensure that all interactions with the APIs are properly synchronized.
+This interface is not inherently required to be thread-safe. It is the responsibility of the calling module or component to ensure that all interactions with the APIs are properly synchronized.
 
 **Implementation Guidance for Vendors:**
 
@@ -427,7 +426,7 @@ all the behavioural aspects of the components.
 
 **Object Lifecycles:** How are objects within the component created, used, and destroyed? Are there unique identifiers for these objects?
 **Method Sequencing:** Is there a specific order in which the component's methods need to be called (e.g., must be initialized before being configured)?
-**State-Dependent Behavior:** Can certain methods only be used when the component is in a particular state? Does a state model govern the component's behavior?
+**State-Dependent Behaviour:** Can certain methods only be used when the component is in a particular state? Does a state model govern the component's behaviour?
 
 ----
 
