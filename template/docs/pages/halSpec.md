@@ -84,6 +84,17 @@ the proxy information above applies.
 
 Vendors may implement internal threading and event mechanisms to meet their operational requirements. These mechanisms must be designed to ensure thread safety when interacting with HAL interface. Proper cleanup of allocated resources (e.g., memory, file handles, threads) is mandatory when the vendor software terminates or closes its connection to the HAL.
 
+
+This interface is not inherently thread-safe. It is the responsibility of the calling module or component to ensure that all interactions with the APIs are properly synchronized.
+
+**Implementation Guidance for Vendors:**
+
+Vendors are free to use internal threading or event mechanisms within their implementation as needed to fulfill operational requirements. However, any such mechanisms must:
+
+*   **Synchronize Access:** Implement appropriate synchronization primitives (e.g., mutexes, semaphores) to prevent race conditions and ensure data integrity when accessing the APIs.
+*   **Resource Management:** Ensure proper cleanup and release of any resources (e.g., memory, threads) allocated during the lifetime of the instance, especially during module shutdown or disconnection.
+
+
 ----
 
 ## Process Model
@@ -96,6 +107,7 @@ multiple processes, or is there only ever one process that uses the interface?
 ## Example Statement - Process Model (Must Be Process Safe)
 
 All APIs are expected to be called from multiple processes. Due to this concurrent access, vendors must implement protection mechanisms within their API implementations to handle multiple processes calling the same API simultaneously. This is crucial to ensure data integrity, prevent race conditions, and maintain the overall stability and reliability of the system.
+
 
 ----
 
@@ -117,7 +129,13 @@ are the expected rules with respect to ownership, clean up and termination.
 - Handle and deallocate memory used for its internal operations.
 - Release all internally allocated memory upon closure to prevent leaks.
 
-----
+---- 
+
+### Example Statement - Memory Model - Option 2
+
+**Caller Responsibilities:**
+
+- Manage memory passed to specific functions as outlined in the API documentation. This includes allocation and deallocation to prevent leaks.
 
 **Module Responsibilities:**
 
