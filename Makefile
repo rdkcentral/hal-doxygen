@@ -43,7 +43,7 @@ FILES += $(shell find ../pages -name "*.md")
 DEPS = Doxyfile.cfg DoxygenLayout.xml $(FILES)
 
 all: $(DEPS)
-	$(DOXYGEN_CMD) Doxyfile.cfg
+	$(DOXYGEN_CMD) Doxyfile.cfg $(DOXYGEN_EXTRA_PARAMS)
 
 vars:
 	@echo PROJECT_NAME: $(PROJECT_NAME)
